@@ -11,7 +11,8 @@ type RaceResultEmbedProps = {
 export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps) {
     const [embedReady, setEmbedReady] = useState(false);
     const [scriptError, setScriptError] = useState(false);
-    const [useIframeFallback, setUseIframeFallback] = useState(false);
+    const [useIframeFallback, setUseIframeFallback] = useState(true); // iframe visível por defeito
+    const initialized = useRef(false);
     const fallbackTimer = useRef<number | null>(null);
     const fallbackUrl = `https://my.raceresult.com/${eventId}/?lang=pt`;
 
@@ -42,13 +43,6 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
 
     // se nada aparecer, marcamos erro para mostrar fallback
     useEffect(() => {
-        // mostrar iframe após 5s se o embed ainda não estiver pronto
-        const softFallback = window.setTimeout(() => {
-            if (!embedReady) {
-                setUseIframeFallback(true);
-            }
-        }, 5000);
-
         fallbackTimer.current = window.setTimeout(() => {
             const hasTable = !!document.querySelector(".RRPublish table.MainTable");
             if (!hasTable) {
@@ -58,12 +52,11 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
         }, 12000);
 
         return () => {
-            window.clearTimeout(softFallback);
             if (fallbackTimer.current) {
                 window.clearTimeout(fallbackTimer.current);
             }
         };
-    }, [embedReady]);
+    }, []);
 
     // Reescrever texto dos splits "R. 03:51" -> "Run 1: 03:51"
     function rewriteRunSplits() {
@@ -126,6 +119,51 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
         });
     }
 
+    function initEmbed() {
+        if (initialized.current) return;
+
+        const RRPublish = (window as any).RRPublish;
+        const container = document.getElementById("divRRPublish");
+
+        if (fallbackTimer.current) {
+            window.clearTimeout(fallbackTimer.current);
+        }
+
+        if (!RRPublish || !container) return;
+
+        const rrp = new RRPublish(container, eventId, mode);
+        rrp.ShowTimerLogo = true;
+        rrp.ShowInfoText = false;
+
+        setEmbedReady(true);
+        setScriptError(false);
+        setUseIframeFallback(false);
+        initialized.current = true;
+
+        // 1) Esperar a tabela inicial ficar pronta
+        let tries = 0;
+        const maxTries = 20;
+        const interval = window.setInterval(() => {
+            const table = document.querySelector(".RRPublish table.MainTable");
+            if (table || tries >= maxTries) {
+                window.clearInterval(interval);
+                rewriteRunSplits();
+            }
+            tries++;
+        }, 500);
+
+        // 2) Sempre que a RaceResult alterar o conteúdo (ex: abrir dropdown),
+        // voltamos a aplicar rewriteRunSplits
+        const observer = new MutationObserver(() => {
+            rewriteRunSplits();
+        });
+
+        observer.observe(container, {
+            childList: true,
+            subtree: true,
+        });
+    }
+
 
     return (
         <div style={{ isolation: 'isolate' }}>
@@ -136,7 +174,7 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
                 >
                     <div id="divRRPublish" className={`RRPublish ${embedReady ? "" : "hidden"}`} />
 
-                    {!embedReady && (
+                    {!embedReady && !useIframeFallback && (
                         <div className="flex items-center justify-center py-8 text-gray-300 text-sm">
                             <div className="animate-spin h-6 w-6 border-2 border-[#FFB800] border-t-transparent rounded-full mr-3"></div>
                             A carregar resultados...
@@ -159,51 +197,37 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
                     )}
                 </div>
 
+                {scriptError && useIframeFallback && (
+                    <div className="text-center text-sm text-gray-400">
+                        Se a tabela não aparecer, podes abrir diretamente:
+                        {" "}
+                        <a
+                            href={fallbackUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[#FFB800] font-semibold underline ml-1"
+                        >
+                            Abrir resultados
+                        </a>
+                    </div>
+                )}
+
                 <Script
                     src="/api/rr-load?lang=pt"
                     strategy="afterInteractive"
                     onLoad={() => {
-                        const RRPublish = (window as any).RRPublish;
-                        const container = document.getElementById("divRRPublish");
-
-                        if (fallbackTimer.current) {
-                            window.clearTimeout(fallbackTimer.current);
-                        }
-
-                        if (RRPublish && container) {
-                            const rrp = new RRPublish(container, eventId, mode);
-                            rrp.ShowTimerLogo = true;
-                            rrp.ShowInfoText = false;
-                            setEmbedReady(true);
-                            setScriptError(false);
-                            setUseIframeFallback(false);
-
-                            // 1) Esperar a tabela inicial ficar pronta
-                            let tries = 0;
-                            const maxTries = 20;
-                            const interval = window.setInterval(() => {
-                                const table = document.querySelector(".RRPublish table.MainTable");
-                                if (table || tries >= maxTries) {
-                                    window.clearInterval(interval);
-                                    rewriteRunSplits();
-                                }
-                                tries++;
-                            }, 500);
-
-                            // 2) Sempre que a RaceResult alterar o conteúdo (ex: abrir dropdown),
-                            // voltamos a aplicar rewriteRunSplits
-                            const observer = new MutationObserver(() => {
-                                rewriteRunSplits();
-                            });
-
-                            observer.observe(container, {
-                                childList: true,
-                                subtree: true,
-                            });
-                        } else {
-                            setScriptError(true);
-                            setUseIframeFallback(true);
-                        }
+                        initEmbed();
+                    }}
+                    onError={() => {
+                        setScriptError(true);
+                        setUseIframeFallback(true);
+                    }}
+                />
+                <Script
+                    src="https://my.raceresult.com/RRPublish/load.js.php?lang=pt"
+                    strategy="afterInteractive"
+                    onLoad={() => {
+                        initEmbed();
                     }}
                     onError={() => {
                         setScriptError(true);
