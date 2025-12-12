@@ -102,6 +102,17 @@ main>header {
 }
 
 /* Dropdowns RRPublish (ex: Mostrar Todos / categorias) */
+.RRPublish .SelectorParent {
+  background: #000 !important;
+}
+
+.RRPublish .Selector,
+.RRPublish .SelectorMenu,
+.RRPublish .SelectorMenu .RRPcollapse > div {
+  background: #000 !important;
+  color: #f5f5f5 !important;
+}
+
 .RRPublish .Selector > div,
 .RRPublish .SelectorParent > div > div,
 .RRPublish .SelectorParent div div {
@@ -110,6 +121,12 @@ main>header {
   color: #f5f5f5 !important;
   border-radius: 6px !important;
   padding: 6px 10px !important; /* reduzir altura no mobile */
+}
+
+.RRPublish .SelectorParent select {
+  background: #111 !important;
+  color: #f5f5f5 !important;
+  border: 1px solid #2a2a2a !important;
 }
 
 .RRPublish .Selector > div.selected,
