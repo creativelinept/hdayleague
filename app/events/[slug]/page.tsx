@@ -21,7 +21,7 @@ export default async function EventSinglePage({
     const formattedDates = dates.map(d => new Date(d).toLocaleDateString("pt-PT"));
 
     return (
-        <main className="w-full">
+        <main className="w-full bg-black">
             {/* Hero Section - HYROX Style */}
             <header
                 className="w-full bg-black text-white relative overflow-hidden"
@@ -90,14 +90,14 @@ export default async function EventSinglePage({
 
                         {/* Description */}
                         {event.description && (
-                            <p className="text-gray-400 text-lg md:text-xl max-w-3xl mx-auto font-medium">
+                            <p className="text-gray-400 text-lg md:text-xl max-w-3xl mx-auto font-medium text-center px-4">
                                 {event.description}
                             </p>
                         )}
 
                         {/* Results Badge */}
                         <div className="pt-4 flex justify-center">
-                            <div className="bg-[#FFB800] text-black px-8 py-3 rounded-full font-bold text-sm md:text-base uppercase tracking-wide">
+                            <div className="bg-[#FFB800] text-black px-10 py-4 rounded-full font-bold text-sm md:text-base uppercase tracking-wide">
                                 {event.mode === "live" ? "Resultados em Tempo Real" : "Resultados Finais"}
                             </div>
                         </div>
@@ -109,7 +109,7 @@ export default async function EventSinglePage({
             </header>
 
             {/* Secção da tabela ocupa a largura toda - UNTOUCHED */}
-            <section className="w-full">
+            <section className="w-full bg-black">
                 <RaceResultEmbed eventId={event.rrEventId} mode={event.mode} />
             </section>
         </main>

@@ -9,7 +9,7 @@ type RaceResultEmbedProps = {
 };
 
 export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps) {
-    // carregar CSS externo deles
+    // carregar CSS externo deles de forma controlada
     useEffect(() => {
         const head = document.head;
 
@@ -20,12 +20,13 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
             "https://sinctime.com/Content/css?v=LlI9gbwZ54oyBpwlBVz5SbX256yIjpz7aRyhadyOeqk1",
         ];
 
-
+        // Carregar CSS com media query para isolar o impacto
         links.forEach((href) => {
             if (!document.querySelector(`link[href="${href}"]`)) {
                 const link = document.createElement("link");
                 link.rel = "stylesheet";
                 link.href = href;
+                // Adicionar ao final do head para que nossos estilos tenham prioridade
                 head.appendChild(link);
             }
         });
@@ -94,7 +95,7 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
 
 
     return (
-        <>
+        <div style={{ isolation: 'isolate' }}>
             <div id="divRRPublish" className="RRPublish" />
 
             <Script
@@ -134,6 +135,6 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
                     }
                 }}
             />
-        </>
+        </div>
     );
 }

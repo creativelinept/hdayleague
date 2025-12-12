@@ -15,7 +15,7 @@ export type EventData = {
 export const events: EventData[] = [
   {
     slug: "hybrid-day-vigo-2025",
-    title: "Hybrid Day Vigo 2025",
+    title: "Vigo 2025",
     date: "2025-12-12",
     location: "Vigo",
     description: "Hybrid Day League",
