@@ -16,7 +16,7 @@ export const events: EventData[] = [
   {
     slug: "hybrid-day-vigo-2025",
     title: "Vigo 2025",
-    date: "2025-12-12",
+    date: "2025-12-13",
     location: "Vigo",
     description: "Hybrid Day League",
     rrEventId: 375372,
