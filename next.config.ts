@@ -1,7 +1,20 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/events/hybrid-day-vigo-2025",
+        permanent: true,
+      },
+      {
+        source: "/events",
+        destination: "/events/hybrid-day-vigo-2025",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
