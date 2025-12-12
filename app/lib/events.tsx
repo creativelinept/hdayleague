@@ -19,8 +19,8 @@ export const events: EventData[] = [
     date: "2025-12-12",
     location: "Vigo",
     description: "Hybrid Day League",
-    rrEventId: 362363,
-    mode: "result", // este já terminou
+    rrEventId: 375372,
+    mode: "live", // este já terminou
   },
 ];
 
