@@ -104,17 +104,17 @@ main>header {
 /* Dropdowns RRPublish (ex: Mostrar Todos / categorias) */
 .RRPublish .Selector > div,
 .RRPublish .SelectorParent > div > div,
-.RRPublish .SelectorParent > div > div > div {
+.RRPublish .SelectorParent div div {
   background: #141414 !important;
   border: 1px solid #2a2a2a !important;
   color: #f5f5f5 !important;
   border-radius: 6px !important;
-  padding: 10px 12px !important;
+  padding: 6px 10px !important; /* reduzir altura no mobile */
 }
 
 .RRPublish .Selector > div.selected,
 .RRPublish .SelectorParent > div > div.selected,
-.RRPublish .SelectorParent > div > div > div.selected {
+.RRPublish .SelectorParent div div.selected {
   background: #1f1f1f !important;
   color: #ffffff !important;
 }
