@@ -22,6 +22,8 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
             "https://fonts.googleapis.com/css?family=Dosis:400,300,600,700",
             "https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap",
             "https://sinctime.com/Content/css?v=LlI9gbwZ54oyBpwlBVz5SbX256yIjpz7aRyhadyOeqk1",
+            // preconnect para acelerar a primeira chamada
+            "https://my.raceresult.com",
         ];
 
         // Carregar CSS com media query para isolar o impacto
@@ -43,7 +45,7 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
             if (!hasTable) {
                 setStatus("error");
             }
-        }, 8000);
+        }, 12000);
 
         return () => {
             if (fallbackTimer.current) {
@@ -128,10 +130,23 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
                     >
                         Abrir resultados
                     </a>
+                    <iframe
+                        title="RaceResult fallback"
+                        src={fallbackUrl}
+                        loading="lazy"
+                        className="w-full"
+                        style={{ border: "1px solid #444", borderRadius: 12, minHeight: "70vh" }}
+                    />
                 </div>
             ) : (
                 <>
                     <div id="divRRPublish" className="RRPublish" />
+                    {status === "loading" && (
+                        <div className="flex items-center justify-center py-10 text-gray-300 text-sm">
+                            <div className="animate-spin h-6 w-6 border-2 border-[#FFB800] border-t-transparent rounded-full mr-3"></div>
+                            A carregar resultados...
+                        </div>
+                    )}
 
                     <Script
                         src="https://my.raceresult.com/RRPublish/load.js.php?lang=pt"
