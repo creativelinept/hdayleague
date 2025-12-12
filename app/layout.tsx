@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,6 +28,40 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* Script para ajustar o viewport só em ecrãs pequenos */}
+        <Script
+          id="mobile-viewport-fix"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+(function () {
+  function updateViewport() {
+    var meta = document.querySelector('meta[name="viewport"]');
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.name = 'viewport';
+      document.head.appendChild(meta);
+    }
+
+    if (window.innerWidth < 440) {
+      meta.setAttribute('content', 'width=440');
+    } else {
+      meta.setAttribute('content', 'width=device-width, initial-scale=1');
+    }
+  }
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    updateViewport();
+  } else {
+    document.addEventListener('DOMContentLoaded', updateViewport);
+  }
+
+  window.addEventListener('resize', updateViewport);
+})();
+            `,
+          }}
+        />
+
         {children}
       </body>
     </html>

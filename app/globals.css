@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* ===========================
+   Core do site
+   =========================== */
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -23,4 +27,219 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ===========================
+   Hero Section Protection
+   =========================== */
+
+/* Protect hero section from external CSS overrides */
+header[style*="background"] {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+header[style*="background"] h1 {
+  color: #ffffff !important;
+}
+
+header[style*="background"] * {
+  box-sizing: border-box;
+}
+
+
+/* ===========================
+   Estilos HYROX para a RaceResult (RRPublish)
+   =========================== */
+
+.RRPublish {
+  margin: 16px 0 !important;
+  /* margens verticais, sem margens laterais */
+  padding: 0 8px;
+  background: #000;
+  color: #f5f5f5;
+  font-family: "Open Sans", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+}
+
+/* Selector / filtros no topo */
+.RRPublish>div.SelectorParent>div.Selector {
+  background: transparent;
+  color: #f5f5f5;
+}
+
+.RRPublish div.ListControl {
+  background: #000;
+  border-bottom: 1px solid #333 !important;
+}
+
+.RRPublish div.ListControl select,
+.RRPublish div.ListControl input {
+  background: #111 !important;
+  color: #f5f5f5 !important;
+  border: 1px solid #333 !important;
+}
+
+/* TABELA PRINCIPAL */
+
+.RRPublish table.MainTable {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0;
+  background: #000;
+}
+
+/* Cabeçalhos da tabela */
+.RRPublish table.MainTable thead tr {
+  background-color: #f5d547 !important;
+  /* amarelo HYROX */
+  border-left: 1px solid #f5d547 !important;
+  border-right: 1px solid #f5d547 !important;
+}
+
+.RRPublish table.MainTable thead tr th {
+  color: #000 !important;
+  padding: 14px 8px !important;
+  border-bottom: none !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  font-family: "Bebas Neue", "Dosis", system-ui, sans-serif;
+  letter-spacing: 0.08em;
+  font-size: 14px;
+}
+
+.RRPublish table.MainTable thead tr th:first-child {
+  border-radius: 8px 0 0 0 !important;
+}
+
+.RRPublish table.MainTable thead tr th:last-child {
+  border-radius: 0 8px 0 0 !important;
+}
+
+/* Corpo da tabela */
+.RRPublish table.MainTable tbody tr td {
+  vertical-align: middle !important;
+  border-top: none !important;
+  border-bottom: 1px solid #262626 !important;
+  color: #f5f5f5 !important;
+  background-color: #000 !important;
+  font-size: 13px;
+}
+
+/* padding por breakpoint */
+@media (min-width: 320px) {
+  .RRPublish table.MainTable tbody tr td {
+    padding: 10px 6px !important;
+  }
+}
+
+@media (min-width: 992px) {
+  .RRPublish table.MainTable tbody tr td {
+    padding: 12px 10px !important;
+  }
+}
+
+@media (min-width: 1200px) {
+  .RRPublish table.MainTable tbody tr td {
+    padding: 16px 12px !important;
+  }
+}
+
+/* Bordas laterais no corpo */
+.RRPublish table.MainTable tbody tr td:first-child {
+  border-left: 1px solid #262626 !important;
+}
+
+.RRPublish table.MainTable tbody tr td:last-child {
+  border-right: 1px solid #262626 !important;
+}
+
+/* Última linha com cantos arredondados */
+.RRPublish table.MainTable tbody tr:last-child td:first-child {
+  border-radius: 0 0 0 8px !important;
+}
+
+.RRPublish table.MainTable tbody tr:last-child td:last-child {
+  border-radius: 0 0 8px 0 !important;
+}
+
+.RRPublish table.MainTable tbody tr:last-child td:last-child.btnPart {
+  border-radius: 0 0 8px 8px !important;
+}
+
+/* Inputs dentro da tabela (se existirem) */
+.RRPublish table.MainTable tbody tr td input {
+  width: 80px !important;
+  height: 40px !important;
+  text-align: center !important;
+  line-height: 40px !important;
+  color: #f5f5f5 !important;
+  border: 1px solid #444 !important;
+  border-radius: 6px !important;
+  background: #111 !important;
+}
+
+/* Campos de pesquisa / input-group */
+.RRPublish table.MainTable .input-group .form-control {
+  width: 257px !important;
+  height: 40px !important;
+  text-align: left !important;
+  margin-right: 10px !important;
+  background: #111 !important;
+  color: #f5f5f5 !important;
+  border: 1px solid #444 !important;
+}
+
+.RRPublish table.MainTable .input-group .input-group-addon {
+  width: auto !important;
+  border-radius: 6px !important;
+  background: #f5d547 !important;
+  color: #000 !important;
+}
+
+/* Hover das linhas */
+.RRPublish tr.Hover:hover {
+  background-color: #181818 !important;
+}
+
+@media only screen and (min-width: 641px) {
+  .RRPublish tr.Hover:hover {
+    background-color: #181818 !important;
+  }
+}
+
+/* “X”/close e botões se existirem */
+.RRPublish table.MainTable tbody tr td .close span {
+  background-color: #333 !important;
+  color: #f5f5f5 !important;
+}
+
+/* Texto de detalhe (dropdown em mobile) */
+.RRPublish tr.brokeCols.withDetails td {
+  background: #000 !important;
+  border-top: none !important;
+}
+
+.RRPublish tr.brokeCols.withDetails td>div {
+  color: #f5f5f5;
+  font-size: 13px;
+}
+
+/* Destacar OficialTime nas linhas de detalhe */
+.RRPublish tr.brokeCols.withDetails td>div[style*="font-weight: bold"] div:first-child {
+  font-family: "Bebas Neue", "Dosis", system-ui, sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Estilo para os separadores de agrupamento (ex: Feminino, Masculino) */
+.RRPublish table.MainTable td.listGrouping {
+  background: #ffac00 !important;
+  color: #000 !important;
+  font-family: "Bebas Neue", "Dosis", system-ui, sans-serif;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 12px 10px !important;
+  border: none !important;
 }
