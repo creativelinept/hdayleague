@@ -1,7 +1,7 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type RaceResultEmbedProps = {
     eventId: number;
@@ -9,6 +9,10 @@ type RaceResultEmbedProps = {
 };
 
 export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps) {
+    const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+    const fallbackTimer = useRef<number | null>(null);
+    const fallbackUrl = `https://my.raceresult.com/${eventId}/?lang=pt`;
+
     // carregar CSS externo deles de forma controlada
     useEffect(() => {
         const head = document.head;
@@ -30,6 +34,22 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
                 head.appendChild(link);
             }
         });
+    }, []);
+
+    // se nada aparecer, marcamos erro para mostrar fallback
+    useEffect(() => {
+        fallbackTimer.current = window.setTimeout(() => {
+            const hasTable = !!document.querySelector(".RRPublish table.MainTable");
+            if (!hasTable) {
+                setStatus("error");
+            }
+        }, 8000);
+
+        return () => {
+            if (fallbackTimer.current) {
+                window.clearTimeout(fallbackTimer.current);
+            }
+        };
     }, []);
 
     // Reescrever texto dos splits "R. 03:51" -> "Run 1: 03:51"
@@ -96,45 +116,66 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
 
     return (
         <div style={{ isolation: 'isolate' }}>
-            <div id="divRRPublish" className="RRPublish" />
+            {status === "error" ? (
+                <div className="flex flex-col gap-4 items-center justify-center text-center px-4 py-10 bg-black text-white border border-yellow-500/40 rounded-lg">
+                    <p className="text-lg font-semibold">Não foi possível carregar a tabela de resultados aqui.</p>
+                    <p className="text-sm text-gray-400">Podes abrir diretamente no site da RaceResult:</p>
+                    <a
+                        href={fallbackUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center justify-center px-6 py-3 bg-[#FFB800] text-black font-bold rounded-full uppercase tracking-wide"
+                    >
+                        Abrir resultados
+                    </a>
+                </div>
+            ) : (
+                <>
+                    <div id="divRRPublish" className="RRPublish" />
 
-            <Script
-                src="https://my.raceresult.com/RRPublish/load.js.php?lang=pt"
-                strategy="afterInteractive"
-                onLoad={() => {
-                    const RRPublish = (window as any).RRPublish;
-                    const container = document.getElementById("divRRPublish");
+                    <Script
+                        src="https://my.raceresult.com/RRPublish/load.js.php?lang=pt"
+                        strategy="afterInteractive"
+                        onLoad={() => {
+                            const RRPublish = (window as any).RRPublish;
+                            const container = document.getElementById("divRRPublish");
 
-                    if (RRPublish && container) {
-                        const rrp = new RRPublish(container, eventId, mode);
-                        rrp.ShowTimerLogo = true;
-                        rrp.ShowInfoText = false;
+                            if (RRPublish && container) {
+                                const rrp = new RRPublish(container, eventId, mode);
+                                rrp.ShowTimerLogo = true;
+                                rrp.ShowInfoText = false;
+                                setStatus("ready");
 
-                        // 1) Esperar a tabela inicial ficar pronta
-                        let tries = 0;
-                        const maxTries = 20;
-                        const interval = window.setInterval(() => {
-                            const table = document.querySelector(".RRPublish table.MainTable");
-                            if (table || tries >= maxTries) {
-                                window.clearInterval(interval);
-                                rewriteRunSplits();
+                                // 1) Esperar a tabela inicial ficar pronta
+                                let tries = 0;
+                                const maxTries = 20;
+                                const interval = window.setInterval(() => {
+                                    const table = document.querySelector(".RRPublish table.MainTable");
+                                    if (table || tries >= maxTries) {
+                                        window.clearInterval(interval);
+                                        rewriteRunSplits();
+                                    }
+                                    tries++;
+                                }, 500);
+
+                                // 2) Sempre que a RaceResult alterar o conteúdo (ex: abrir dropdown),
+                                // voltamos a aplicar rewriteRunSplits
+                                const observer = new MutationObserver(() => {
+                                    rewriteRunSplits();
+                                });
+
+                                observer.observe(container, {
+                                    childList: true,
+                                    subtree: true,
+                                });
+                            } else {
+                                setStatus("error");
                             }
-                            tries++;
-                        }, 500);
-
-                        // 2) Sempre que a RaceResult alterar o conteúdo (ex: abrir dropdown),
-                        // voltamos a aplicar rewriteRunSplits
-                        const observer = new MutationObserver(() => {
-                            rewriteRunSplits();
-                        });
-
-                        observer.observe(container, {
-                            childList: true,
-                            subtree: true,
-                        });
-                    }
-                }}
-            />
+                        }}
+                        onError={() => setStatus("error")}
+                    />
+                </>
+            )}
         </div>
     );
 }
