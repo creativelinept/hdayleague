@@ -9,7 +9,8 @@ type RaceResultEmbedProps = {
 };
 
 export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps) {
-    const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+    const [embedReady, setEmbedReady] = useState(false);
+    const [scriptError, setScriptError] = useState(false);
     const fallbackTimer = useRef<number | null>(null);
     const fallbackUrl = `https://my.raceresult.com/${eventId}/?lang=pt`;
 
@@ -43,7 +44,7 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
         fallbackTimer.current = window.setTimeout(() => {
             const hasTable = !!document.querySelector(".RRPublish table.MainTable");
             if (!hasTable) {
-                setStatus("error");
+                setScriptError(true);
             }
         }, 12000);
 
@@ -118,79 +119,86 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
 
     return (
         <div style={{ isolation: 'isolate' }}>
-            {status === "error" ? (
-                <div className="flex flex-col gap-4 items-center justify-center text-center px-4 py-10 bg-black text-white border border-yellow-500/40 rounded-lg">
-                    <p className="text-lg font-semibold">Não foi possível carregar a tabela de resultados aqui.</p>
-                    <p className="text-sm text-gray-400">Podes abrir diretamente no site da RaceResult:</p>
-                    <a
-                        href={fallbackUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center justify-center px-6 py-3 bg-[#FFB800] text-black font-bold rounded-full uppercase tracking-wide"
-                    >
-                        Abrir resultados
-                    </a>
+            <div className="flex flex-col gap-4">
+                {!embedReady && (
                     <iframe
-                        title="RaceResult fallback"
+                        title="Resultados RaceResult (iframe)"
                         src={fallbackUrl}
-                        loading="lazy"
+                        loading="eager"
                         className="w-full"
-                        style={{ border: "1px solid #444", borderRadius: 12, minHeight: "70vh" }}
-                    />
-                </div>
-            ) : (
-                <>
-                    <div id="divRRPublish" className="RRPublish" />
-                    {status === "loading" && (
-                        <div className="flex items-center justify-center py-10 text-gray-300 text-sm">
-                            <div className="animate-spin h-6 w-6 border-2 border-[#FFB800] border-t-transparent rounded-full mr-3"></div>
-                            A carregar resultados...
-                        </div>
-                    )}
-
-                    <Script
-                        src="https://my.raceresult.com/RRPublish/load.js.php?lang=pt"
-                        strategy="afterInteractive"
-                        onLoad={() => {
-                            const RRPublish = (window as any).RRPublish;
-                            const container = document.getElementById("divRRPublish");
-
-                            if (RRPublish && container) {
-                                const rrp = new RRPublish(container, eventId, mode);
-                                rrp.ShowTimerLogo = true;
-                                rrp.ShowInfoText = false;
-                                setStatus("ready");
-
-                                // 1) Esperar a tabela inicial ficar pronta
-                                let tries = 0;
-                                const maxTries = 20;
-                                const interval = window.setInterval(() => {
-                                    const table = document.querySelector(".RRPublish table.MainTable");
-                                    if (table || tries >= maxTries) {
-                                        window.clearInterval(interval);
-                                        rewriteRunSplits();
-                                    }
-                                    tries++;
-                                }, 500);
-
-                                // 2) Sempre que a RaceResult alterar o conteúdo (ex: abrir dropdown),
-                                // voltamos a aplicar rewriteRunSplits
-                                const observer = new MutationObserver(() => {
-                                    rewriteRunSplits();
-                                });
-
-                                observer.observe(container, {
-                                    childList: true,
-                                    subtree: true,
-                                });
-                            } else {
-                                setStatus("error");
-                            }
+                        style={{
+                            border: "1px solid #444",
+                            borderRadius: 12,
+                            minHeight: "75vh",
+                            background: "#000",
                         }}
-                        onError={() => setStatus("error")}
                     />
-                </>
-            )}
+                )}
+
+                <div id="divRRPublish" className={`RRPublish ${embedReady ? "" : "hidden"}`} />
+
+                {scriptError && !embedReady && (
+                    <div className="text-center text-sm text-gray-400">
+                        Se a tabela não aparecer, podes abrir diretamente:
+                        {" "}
+                        <a
+                            href={fallbackUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[#FFB800] font-semibold underline ml-1"
+                        >
+                            Abrir resultados
+                        </a>
+                    </div>
+                )}
+
+                <Script
+                    src="https://my.raceresult.com/RRPublish/load.js.php?lang=pt"
+                    strategy="afterInteractive"
+                    onLoad={() => {
+                        const RRPublish = (window as any).RRPublish;
+                        const container = document.getElementById("divRRPublish");
+
+                        if (fallbackTimer.current) {
+                            window.clearTimeout(fallbackTimer.current);
+                        }
+
+                        if (RRPublish && container) {
+                            const rrp = new RRPublish(container, eventId, mode);
+                            rrp.ShowTimerLogo = true;
+                            rrp.ShowInfoText = false;
+                            setEmbedReady(true);
+                            setScriptError(false);
+
+                            // 1) Esperar a tabela inicial ficar pronta
+                            let tries = 0;
+                            const maxTries = 20;
+                            const interval = window.setInterval(() => {
+                                const table = document.querySelector(".RRPublish table.MainTable");
+                                if (table || tries >= maxTries) {
+                                    window.clearInterval(interval);
+                                    rewriteRunSplits();
+                                }
+                                tries++;
+                            }, 500);
+
+                            // 2) Sempre que a RaceResult alterar o conteúdo (ex: abrir dropdown),
+                            // voltamos a aplicar rewriteRunSplits
+                            const observer = new MutationObserver(() => {
+                                rewriteRunSplits();
+                            });
+
+                            observer.observe(container, {
+                                childList: true,
+                                subtree: true,
+                            });
+                        } else {
+                            setScriptError(true);
+                        }
+                    }}
+                    onError={() => setScriptError(true)}
+                />
+            </div>
         </div>
     );
 }
