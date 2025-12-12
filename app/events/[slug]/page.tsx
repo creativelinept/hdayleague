@@ -28,7 +28,10 @@ export default async function EventSinglePage({
                 style={{ backgroundColor: '#000000', color: '#ffffff' }}
             >
                 {/* Content Container - Centered with top spacing */}
-                <div className="relative w-full flex flex-col items-center justify-center px-4 sm:px-6 pt-12 pb-16 md:pt-16 md:pb-24">
+                <div
+                    className="relative w-full flex flex-col items-center justify-center px-4 sm:px-6 pb-16 md:pb-24"
+                    style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2.75rem)" }}
+                >
                     {/* Logo */}
                     <div className="flex justify-center items-center mb-10">
                         <Image

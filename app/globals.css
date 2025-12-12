@@ -63,6 +63,9 @@ main>header[style*="background"] h1 {
 
 main>header[style*="background"] p {
   color: #9ca3af !important;
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
   font-weight: 500 !important;
 }
 

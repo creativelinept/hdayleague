@@ -11,6 +11,7 @@ type RaceResultEmbedProps = {
 export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps) {
     const [embedReady, setEmbedReady] = useState(false);
     const [scriptError, setScriptError] = useState(false);
+    const [useIframeFallback, setUseIframeFallback] = useState(false);
     const fallbackTimer = useRef<number | null>(null);
     const fallbackUrl = `https://my.raceresult.com/${eventId}/?lang=pt`;
 
@@ -45,6 +46,7 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
             const hasTable = !!document.querySelector(".RRPublish table.MainTable");
             if (!hasTable) {
                 setScriptError(true);
+                setUseIframeFallback(true);
             }
         }, 12000);
 
@@ -120,40 +122,47 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
     return (
         <div style={{ isolation: 'isolate' }}>
             <div className="flex flex-col gap-4">
-                {!embedReady && (
-                    <iframe
-                        title="Resultados RaceResult (iframe)"
-                        src={fallbackUrl}
-                        loading="eager"
-                        className="w-full"
-                        style={{
-                            border: "1px solid #444",
-                            borderRadius: 12,
-                            minHeight: "75vh",
-                            background: "#000",
-                        }}
-                    />
-                )}
-
-                <div id="divRRPublish" className={`RRPublish ${embedReady ? "" : "hidden"}`} />
-
-                {scriptError && !embedReady && (
-                    <div className="text-center text-sm text-gray-400">
-                        Se a tabela não aparecer, podes abrir diretamente:
-                        {" "}
-                        <a
-                            href={fallbackUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-[#FFB800] font-semibold underline ml-1"
-                        >
-                            Abrir resultados
-                        </a>
+                {useIframeFallback ? (
+                    <div className="flex flex-col gap-3">
+                        <iframe
+                            title="Resultados RaceResult (iframe)"
+                            src={fallbackUrl}
+                            loading="eager"
+                            className="w-full"
+                            style={{
+                                border: "1px solid #444",
+                                borderRadius: 12,
+                                minHeight: "75vh",
+                                background: "#000",
+                            }}
+                        />
+                        <div className="text-center text-sm text-gray-400">
+                            Se a tabela não aparecer, podes abrir diretamente:
+                            {" "}
+                            <a
+                                href={fallbackUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-[#FFB800] font-semibold underline ml-1"
+                            >
+                                Abrir resultados
+                            </a>
+                        </div>
                     </div>
+                ) : (
+                    <>
+                        <div id="divRRPublish" className="RRPublish" />
+                        {!embedReady && (
+                            <div className="flex items-center justify-center py-10 text-gray-300 text-sm">
+                                <div className="animate-spin h-6 w-6 border-2 border-[#FFB800] border-t-transparent rounded-full mr-3"></div>
+                                A carregar resultados...
+                            </div>
+                        )}
+                    </>
                 )}
 
                 <Script
-                    src="https://my.raceresult.com/RRPublish/load.js.php?lang=pt"
+                    src="/api/rr-load?lang=pt"
                     strategy="afterInteractive"
                     onLoad={() => {
                         const RRPublish = (window as any).RRPublish;
@@ -169,6 +178,7 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
                             rrp.ShowInfoText = false;
                             setEmbedReady(true);
                             setScriptError(false);
+                            setUseIframeFallback(false);
 
                             // 1) Esperar a tabela inicial ficar pronta
                             let tries = 0;
@@ -194,9 +204,13 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
                             });
                         } else {
                             setScriptError(true);
+                            setUseIframeFallback(true);
                         }
                     }}
-                    onError={() => setScriptError(true)}
+                    onError={() => {
+                        setScriptError(true);
+                        setUseIframeFallback(true);
+                    }}
                 />
             </div>
         </div>
