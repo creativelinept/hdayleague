@@ -5,12 +5,12 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/",
-        destination: "/events/hybrid-day-vigo-2025",
+        destination: "/events/hybrid-day-aveiro-2026",
         permanent: true,
       },
       {
         source: "/events",
-        destination: "/events/hybrid-day-vigo-2025",
+        destination: "/events/hybrid-day-aveiro-2026",
         permanent: true,
       },
     ];
