@@ -14,12 +14,12 @@ export type EventData = {
 
 export const events: EventData[] = [
   {
-    slug: "hybrid-day-vigo-2025",
-    title: "Vigo 2025",
-    date: "2025-12-13",
-    location: "Vigo",
+    slug: "hybrid-day-aveiro-2026",
+    title: "Aveiro 2026",
+    date: "2026-01-31",
+    location: "Aveiro",
     description: "Hybrid Day League",
-    rrEventId: 375372,
+    rrEventId: 381322,
     mode: "live", // este já terminou
   },
 ];
