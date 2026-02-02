@@ -20,7 +20,7 @@ export const events: EventData[] = [
     location: "Aveiro",
     description: "Hybrid Day League",
     rrEventId: 381322,
-    mode: "live", // este já terminou
+    mode: "result", // este já terminou
   },
 ];
 
