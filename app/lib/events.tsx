@@ -20,7 +20,7 @@ export const events: EventData[] = [
     location: "Madrid",
     description: "Hybrid Day Madrid",
     rrEventId: 383186,
-    mode: "live", // este já terminou
+    mode: "result", // este já terminou
   },
 ];
 
