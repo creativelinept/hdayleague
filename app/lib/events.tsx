@@ -14,13 +14,13 @@ export type EventData = {
 
 export const events: EventData[] = [
   {
-    slug: "hybrid-day-aveiro-2026",
-    title: "Aveiro 2026",
-    date: "2026-01-31",
-    location: "Aveiro",
-    description: "Hybrid Day League",
-    rrEventId: 381322,
-    mode: "result", // este já terminou
+    slug: "hybrid-day-madrid-2026",
+    title: "Madrid 2026",
+    date: "2026-02-15",
+    location: "Madrid",
+    description: "Hybrid Day Madrid",
+    rrEventId: 383186,
+    mode: "live", // este já terminou
   },
 ];
 
