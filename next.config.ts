@@ -5,17 +5,17 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/",
-        destination: "/events/hybrid-day-sevilla-2026",
+        destination: "/events/hybrid-day-santa-maria-da-feira",
         permanent: false,
       },
       {
         source: "/events",
-        destination: "/events/hybrid-day-sevilla-2026",
+        destination: "/events/hybrid-day-santa-maria-da-feira",
         permanent: false,
       },
       {
         source: "/events/hybrid-day-vigo-2025",
-        destination: "/events/hybrid-day-sevilla-2026",
+        destination: "/events/hybrid-day-santa-maria-da-feira",
         permanent: false,
       },
     ];
