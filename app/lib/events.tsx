@@ -14,12 +14,12 @@ export type EventData = {
 
 export const events: EventData[] = [
   {
-    slug: "hybrid-day-valencia",
-    title: "Valencia 2026",
-    date: "2026-05-09",
-    location: "Valencia",
-    description: "Hybrid Day Valencia",
-    rrEventId: 397732,
+    slug: "hybrid-day-leiria",
+    title: "Leiria 2026",
+    date: "2026-07-17",
+    location: "Leiria",
+    description: "Hybrid Day Leiria",
+    rrEventId: 411277,
     mode: "live", // este ainda não terminou
   },
 ];
