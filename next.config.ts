@@ -5,17 +5,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/events",
-        destination: "/events/hybrid-day-valencia",
-        permanent: false,
-      },
-      {
-        source: "/events/hybrid-day-santa-maria-da-feira",
-        destination: "/events/hybrid-day-valencia",
-        permanent: false,
-      },
-      {
-        source: "/events/hybrid-day-vigo-2025",
-        destination: "/events/hybrid-day-valencia",
+        destination: "/",
         permanent: false,
       },
     ];

@@ -14,12 +14,12 @@ export type EventData = {
 
 export const events: EventData[] = [
   {
-    slug: "hybrid-day-estoril",
-    title: "Estoril 2026",
-    date: "2026-08-22",
-    location: "Estoril",
-    description: "Hybrid Day Estoril",
-    rrEventId: 417414,
+    slug: "hybrid-day-beja",
+    title: "Beja 2026",
+    date: "2026-09-26",
+    location: "Beja",
+    description: "Hybrid Day Beja",
+    rrEventId: 425032,
     mode: "live", // este ainda não terminou
   },
 ];

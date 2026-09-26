@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import Image from "next/image";
 import RaceResultEmbed from "../../components/RaceResultEmbed";
 import { getEventBySlug } from "../../lib/events";
@@ -12,8 +12,9 @@ export default async function EventSinglePage({
 
     const event = getEventBySlug(slug);
 
+    // Eventos antigos ou inexistentes vão para o evento atual
     if (!event) {
-        return notFound();
+        redirect("/");
     }
 
     // Handle single or multiple dates
