@@ -119,7 +119,29 @@ export default function RaceResultEmbed({ eventId, mode }: RaceResultEmbedProps)
         });
     }
 
+    // O widget da RaceResult faz history.pushState/replaceState com uma string
+    // ("State0.123..."). O Next.js intercepta essas chamadas e tenta adicionar
+    // "__NA" ao estado, o que rebenta com strings e impede o widget de arrancar.
+    // Estados que não são objetos passam diretamente para o History nativo.
+    function patchHistoryForRaceResult() {
+        const w = window as any;
+        if (w.__rrHistoryPatched) return;
+        w.__rrHistoryPatched = true;
+
+        (["pushState", "replaceState"] as const).forEach((method) => {
+            const nextImpl = window.history[method];
+            const nativeImpl = History.prototype[method];
+            window.history[method] = function (data: any, unused: string, url?: string | URL | null) {
+                if (data !== null && data !== undefined && typeof data !== "object") {
+                    return nativeImpl.call(window.history, data, unused, url);
+                }
+                return nextImpl.call(window.history, data, unused, url);
+            };
+        });
+    }
+
     function initEmbed() {
+        patchHistoryForRaceResult();
         if (initialized.current) return;
 
         const RRPublish = (window as any).RRPublish;
