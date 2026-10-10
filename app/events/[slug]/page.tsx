@@ -116,6 +116,26 @@ export default async function EventSinglePage({
             <section className="w-full bg-black">
                 <RaceResultEmbed eventId={event.rrEventId} mode={event.mode} />
             </section>
+
+            {/* Parceiros - fora da secção da tabela para não interferir com o CSS da RaceResult */}
+            <footer className="w-full bg-black border-t border-gray-800 px-4 py-10">
+                <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16">
+                    <Image
+                        src="/images/lap2go.png"
+                        alt="Lap2Go"
+                        width={256}
+                        height={96}
+                        className="h-12 md:h-14 w-auto"
+                    />
+                    <Image
+                        src="/images/sinctime.png"
+                        alt="Sinctime"
+                        width={256}
+                        height={46}
+                        className="h-6 md:h-8 w-auto"
+                    />
+                </div>
+            </footer>
         </main>
     );
 }
