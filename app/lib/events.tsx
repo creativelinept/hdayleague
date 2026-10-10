@@ -16,7 +16,7 @@ export const events: EventData[] = [
   {
     slug: "hybrid-day-malaga",
     title: "Málaga 2026",
-    date: "2026-09-26",
+    date: "2026-10-10",
     location: "Málaga",
     description: "Hybrid Day Málaga",
     rrEventId: 428349,
