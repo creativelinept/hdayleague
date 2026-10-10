@@ -14,12 +14,12 @@ export type EventData = {
 
 export const events: EventData[] = [
   {
-    slug: "hybrid-day-beja",
-    title: "Beja 2026",
+    slug: "hybrid-day-malaga",
+    title: "Málaga 2026",
     date: "2026-09-26",
-    location: "Beja",
-    description: "Hybrid Day Beja",
-    rrEventId: 425032,
+    location: "Málaga",
+    description: "Hybrid Day Málaga",
+    rrEventId: 428349,
     mode: "live", // este ainda não terminou
   },
 ];
